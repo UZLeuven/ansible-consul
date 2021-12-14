@@ -3,7 +3,7 @@
 
 - name: "Configure consul services"
   template:
-    dest: "{{ consul_configd_path }}/service_{{ item.name }}.json"
+    dest: "{{ consul_configd_path }}/service_{{ item.id |default(item.name) }}.json"
     src: service.json.j2
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
@@ -44,7 +44,7 @@
 - name: Set fact with list of service we manage
   set_fact:
     managed_files: "{{ managed_files |default([]) }} + \
-    [ '{{ consul_configd_path }}/service_{{ item.name }}.json' ]"
+    [ '{{ consul_configd_path }}/service_{{ item.id | default(item.name) }}.json' ]"
   with_items: "{{ consul_services }}"
 
 - name: Delete non declared services
